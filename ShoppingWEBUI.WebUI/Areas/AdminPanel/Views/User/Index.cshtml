@@ -1,0 +1,53 @@
+﻿@using ShoppingWEBUI.Core.DTO.User
+@model List<UserDTO>
+@{
+    ViewData["Title"] = "Kullanıcı İşlemleri";
+    Layout = "~/Areas/AdminPanel/Views/Shared/_Layout.cshtml";
+}
+
+@Html.AntiForgeryToken()
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Kullanıcılar</h3>
+
+        <div class="card-tools">
+            <button type="button" class="btn btn-block btn-success" data-toggle="modal" data-target="#modal-ProductAdd">Ekle</button>
+        </div>
+    </div>
+    <div class="card-body">
+        <table id="tblUsers" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+
+                    <th style="width:10%"></th>
+                    <th>Adı</th>
+                    <th>Soyadı</th>
+                    <th>E-Posta</th>
+                    <th style="width:25%">İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    for (int i = 0; i < Model.Count(); i++)
+                    {
+                        <tr>
+                            <td>@Convert.ToInt32(i+1)</td>
+                            <td>@Model[i].Adi</td>
+                            <td>@Model[i].Soyadi</td>
+                            <td>@Model[i].EPosta</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btnRemoveProduct btn btn-danger" data-id=@Model[i].Guid>Sil</button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+
+            </tbody>
+        </table>
+    </div>
+    <!-- /.card-body -->
+    <!-- /.card-footer-->
+</div>
+

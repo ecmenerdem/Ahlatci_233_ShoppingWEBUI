@@ -1,0 +1,429 @@
+﻿@using ShoppingWEBUI.Core.Model
+@model ProductViewModel
+@{
+    ViewData["Title"] = "Ürünler";
+    Layout = "~/Areas/AdminPanel/Views/Shared/_Layout.cshtml";
+}
+
+@Html.AntiForgeryToken()
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Ürünler</h3>
+
+        <div class="card-tools">
+            <button type="button" class="btn btn-block btn-warning" data-toggle="modal" data-target="#modal-GetCategories">Kategoriler</button>
+            <button type="button" class="btn btn-block btn-success" data-toggle="modal" data-target="#modal-ProductAdd">Ekle</button>
+        </div>
+
+        
+    </div>
+    <div class="card-body">
+        <table id="tblProducts" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+
+                    <th style="width:10%"></th>
+                    <th>Ürün Resmi</th>
+                    <th>Ürün Adı</th>
+                    <th>Ürün Kategorisi</th>
+                    <th style="width:25%">İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    for (int i = 0; i < Model.Products.Count(); i++)
+                    {
+
+                        string imagePath = "/MediaUploads/" + @Model.Products[i].FeaturedImage;
+
+
+                            <tr>
+                                <td>@Convert.ToInt32(i+1)</td>
+                                <td>
+                                    <a href="@imagePath" data-toggle="lightbox" data-title="@Model.Products[i].Name">
+                                        <img src="@imagePath" class="img-fluid mb-2" alt="black sample" width="100"/>
+                                    </a>
+                                </td>
+                                <td>@Model.Products[i].Name</td>
+                                <td>@Model.Products[i].CategoryName</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button type="button" class="btnProductDetail btn btn-info" data-id=@Model.Products[i].Guid>Güncelle</button>
+                                        <button type="button" class="btnRemoveProduct btn btn-danger" data-id=@Model.Products[i].Guid>Sil</button>
+                                    </div>
+                                </td>
+                            </tr>
+                    }
+                }
+
+            </tbody>
+        </table>
+    </div>
+    <!-- /.card-body -->
+    <!-- /.card-footer-->
+</div>
+<div class="modal fade" id="modal-GetCategories">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Kategoriler</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @await Component.InvokeAsync("Categories",@Model.Categories)
+
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<div class="modal fade" id="modal-ProductAdd">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Ürün Ekle</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtProductName_Add">Ürün Adı</label>
+                    <input type="text" class="form-control" id="txtProductName_Add">
+                </div>
+                <div class="form-group">
+                    <label for="txtProductDescription_Add">Ürün Açıklaması</label>
+                    <textarea class="form-control" rows="5" id="txtProductDescription_Add"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="ddlProductCategory">Kategorisi</label>
+                    <select class="custom-select rounded-0" id="ddlProductCategory">
+                        @{
+                            for (int i = 0; i < Model.Categories.Count; i++)
+                            {
+                                    <option value=@Model.Categories[i].Guid>@Model.Categories[i].Name</option>
+                            }
+                        }
+
+
+
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="txtKategoriAd_Add">Öne Çıkan Görsel</label>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="fuProductFeaturedImage">
+                        <label class="custom-file-label" for="fuProductFeaturedImage">Dosya Seç</label>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnProductSave_Add">Kaydet</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<div class="modal fade" id="modal-ProductUpdate">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Ürün Güncelle</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtProductName_Update">Ürün Adı</label>
+                    <input type="text" class="form-control" id="txtProductName_Update">
+                </div>
+                <div class="form-group">
+                    <label for="txtProductDescription_Update">Ürün Açıklaması</label>
+                    <textarea class="form-control" rows="5" id="txtProductDescription_Update"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="ddlProductCategory">Kategorisi</label>
+                    <select class="custom-select rounded-0" id="ddlProductCategory_Update">
+                        @{
+                            for (int i = 0; i < Model.Categories.Count; i++)
+                            {
+                                    <option value=@Model.Categories[i].Guid>@Model.Categories[i].Name</option>
+                            }
+                        }
+
+
+
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="fuProductFeaturedImage_Update">Öne Çıkan Görsel</label>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input"  id="fuProductFeaturedImage_Update">
+                        <label class="custom-file-label" for="fuProductFeaturedImage_Update">Dosya Seç</label>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" id="btnProductSave_Update">Kaydet</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+
+<script>
+    $(function () {
+        $("#tblProducts").DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#tblProducts_wrapper .col-md-6:eq(0)');
+
+        $('#btnProductSave_Add').click(function () {
+
+            var productDTO = {
+                Name: $('#txtProductName_Add').val(),
+                Description: $('#txtProductDescription_Add').val(),
+                CategoryGUID: $('#ddlProductCategory').val()
+            }
+
+            var files = $('#fuProductFeaturedImage').prop('files');
+
+
+            var formData = new FormData();
+            formData.append("Name", productDTO.Name);
+            formData.append("Description", productDTO.Description);
+            formData.append("CategoryGUID", productDTO.CategoryGUID);
+            formData.append("productImage", files[0]);
+
+            $.ajax({
+                url: '/Admin/UrunEkle',
+                type: 'post',
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: response.message,
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata Oluştu',
+                            text: 'Something went wrong!'
+                        })
+                    }
+
+
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'İstek Sırasında Hata Oluştu',
+                        text: 'Something went wrong!'
+                    })
+                }
+
+            });
+
+        })
+
+        $('.btnProductDetail').click(function () {
+            var productGUID = $(this).attr('data-id');
+            $.ajax({
+                url: '/Admin/Urun/' + productGUID,
+                type: 'get',
+                success: function (response) {
+                    if (response.success) {
+                        $('#modal-ProductUpdate').modal('show');
+                        $('#txtProductName_Update').val(response.data.name);
+                        $('#txtProductDescription_Update').val(response.data.description);
+                        $('#btnProductSave_Update').attr('data-id', productGUID);
+
+
+                        const select = document.querySelector('#ddlProductCategory_Update');
+                        select.value = response.data.categoryGUID;
+
+
+
+
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata Oluştu',
+                            text: 'Something went wrong!'
+                        })
+                    }
+
+
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'İstek Sırasında Hata Oluştu',
+                        text: 'Something went wrong!'
+                    })
+                }
+
+            });
+
+
+        });
+
+        $('#btnProductSave_Update').click(function () {
+            var productDTO = {
+                Name: $('#txtProductName_Update').val(),
+                Description: $('#txtProductDescription_Update').val(),
+                CategoryGUID: $('#ddlProductCategory_Update').val(),
+                Guid: $(this).attr('data-id')
+
+            }
+
+            var files = $('#fuProductFeaturedImage_Update').prop('files');
+
+
+            var formData = new FormData();
+            formData.append("Name", productDTO.Name);
+            formData.append("Description", productDTO.Description);
+            formData.append("CategoryGUID", productDTO.CategoryGUID);
+            formData.append("Guid", productDTO.Guid);
+            formData.append("productImage", files[0]);
+
+            $.ajax({
+                url: '/Admin/UrunGuncelle',
+                type: 'post',
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: response.message,
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                        setTimeout(function () { window.location.reload() }, 3000);
+
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata Oluştu',
+                            text: 'Something went wrong!'
+                        })
+                    }
+
+
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'İstek Sırasında Hata Oluştu',
+                        text: 'Something went wrong!'
+                    })
+                }
+
+            });
+
+        })
+
+
+        $('.btnRemoveProduct').click(function () {
+
+            var productGUID=$(this).attr('data-id');
+           
+
+            Swal.fire({
+                title: 'Silmek İstediğinizden Emin misiniz?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sil',
+                cancelButtonText: 'Vazgeç'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Admin/RemoveProduct',
+                        type: 'post',
+                        data: { productGUID },
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("XSRF-TOKEN", $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: response.message,
+                                    showConfirmButton: false,
+                                    timer: 3000
+                                });
+
+
+                                setTimeout(function () { window.location.reload() }, 3000);
+
+                            }
+                            else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Hata Oluştu',
+                                    text: 'Something went wrong!'
+                                })
+                            }
+
+
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'İstek Sırasında Hata Oluştu',
+                                text: 'Something went wrong!'
+                            })
+                        }
+
+                    });
+                }
+            })
+        });
+
+    });
+
+
+</script>
+

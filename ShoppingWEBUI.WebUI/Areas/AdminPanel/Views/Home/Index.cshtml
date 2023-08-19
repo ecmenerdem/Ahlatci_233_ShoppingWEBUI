@@ -1,0 +1,13 @@
+﻿@using ShoppingWEBUI.Core.Model
+@model UserViewModel
+
+@{
+    ViewData["Title"] = "Anasayfa";
+    Layout = "~/Areas/AdminPanel/Views/Shared/_Layout.cshtml";
+}
+
+Sayın @Model.AdSoyad Sisteme Hoş Geldiniz.<br />
+<strong>E-Posta:</strong> @Model.EPosta<br />
+<strong>Adres:</strong> @Model.Adres<br />
+
+
